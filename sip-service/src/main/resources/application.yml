@@ -1,0 +1,106 @@
+server:
+  port: 8083
+  servlet:
+    context-path: /sip-service
+
+spring:
+  application:
+    name: sip-service
+  
+  # Database configuration
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:testdb}
+    username: ${SPRING_DATASOURCE_USERNAME:sa}
+    password: ${SPRING_DATASOURCE_PASSWORD:password}
+    driver-class-name: org.h2.Driver
+  
+  # JPA/Hibernate configuration
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+  
+  # H2 Console for development
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  
+  # Mail configuration
+  mail:
+    host: ${SMTP_HOST:localhost}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USER:}
+    password: ${SMTP_PASS:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+
+# SIP service configuration
+sip:
+  scheduler:
+    enabled: true
+    cron: "0 0 9 * * ?" # Daily at 9:00 AM
+    timezone: "UTC"
+  processing:
+    batch-size: 100
+    retry-attempts: 3
+    retry-delay: 5000 # milliseconds
+
+# FCM configuration
+fcm:
+  enabled: ${FCM_ENABLED:true}
+  server-key: ${FCM_SERVER_KEY:}
+  api-url: "https://fcm.googleapis.com/fcm/send"
+
+# Notification configuration
+notification:
+  email:
+    enabled: true
+    from-address: "noreply@fintech.com"
+  push:
+    enabled: true
+  retry:
+    enabled: true
+    max-attempts: 3
+    delay: 5000 # milliseconds
+
+# Logging configuration
+logging:
+  level:
+    com.fintech.sip: DEBUG
+    org.springframework.scheduling: DEBUG
+    org.springframework.mail: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Management endpoints for monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,scheduledtasks
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      simple:
+        enabled: true
+
+# Application specific configuration
+app:
+  name: SIP Service
+  version: 1.0.0
+  description: Systematic Investment Plan scheduling and notification service

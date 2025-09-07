@@ -1,0 +1,81 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /market-ingest
+
+spring:
+  application:
+    name: market-ingest
+  
+  # WebSocket configuration
+  websocket:
+    enabled: true
+    broker:
+      relay:
+        enabled: false # Using simple broker for development
+        host: localhost
+        port: 61613
+        username: guest
+        password: guest
+
+# Market data configuration
+market:
+  ws:
+    url: ${MARKET_WS_URL:mock://localhost}
+    key: ${MARKET_WS_KEY:}
+    reconnect:
+      enabled: true
+      initial-delay: 5000
+      max-delay: 30000
+      multiplier: 2.0
+    rate-limit:
+      enabled: true
+      per-symbol-ms: 100
+    heartbeat:
+      enabled: true
+      interval: 30000
+
+# Logging configuration
+logging:
+  level:
+    com.fintech.market: DEBUG
+    org.springframework.messaging: DEBUG
+    org.springframework.web.socket: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Management endpoints for monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,websocket
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      simple:
+        enabled: true
+
+# Application specific configuration
+app:
+  name: Market Ingest Service
+  version: 1.0.0
+  description: Market data ingestion service with WebSocket and STOMP
+
+# Mock data configuration (for testing)
+mock:
+  data:
+    enabled: ${MOCK_DATA_ENABLED:true}
+    symbols:
+      - AAPL
+      - GOOGL
+      - MSFT
+      - TSLA
+      - AMZN
+    interval: 1000 # milliseconds between mock ticks
+    price-range:
+      min: 50.0
+      max: 500.0

@@ -1,0 +1,78 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /auth-service
+
+spring:
+  application:
+    name: auth-service
+  
+  # Database configuration
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:testdb}
+    username: ${SPRING_DATASOURCE_USERNAME:sa}
+    password: ${SPRING_DATASOURCE_PASSWORD:password}
+    driver-class-name: org.h2.Driver
+  
+  # JPA/Hibernate configuration
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+  
+  # H2 Console for development
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  
+  # Mail configuration
+  mail:
+    host: ${SMTP_HOST:localhost}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USER:}
+    password: ${SMTP_PASS:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+
+# JWT configuration
+jwt:
+  secret: ${JWT_SECRET:mySecretKey123456789012345678901234567890}
+  expiration: 86400000 # 24 hours in milliseconds
+
+# Logging configuration
+logging:
+  level:
+    com.fintech.auth: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.mail: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Management endpoints for monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+# Application specific configuration
+app:
+  name: Fintech Auth Service
+  version: 1.0.0
+  description: Authentication service with email verification

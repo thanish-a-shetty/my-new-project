@@ -1,0 +1,104 @@
+server:
+  port: 8084
+  servlet:
+    context-path: /chatbot-service
+
+spring:
+  application:
+    name: chatbot-service
+  
+  # Database configuration
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:h2:mem:testdb}
+    username: ${SPRING_DATASOURCE_USERNAME:sa}
+    password: ${SPRING_DATASOURCE_PASSWORD:password}
+    driver-class-name: org.h2.Driver
+  
+  # JPA/Hibernate configuration
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+  
+  # H2 Console for development
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+# OpenAI configuration
+openai:
+  api:
+    key: ${OPENAI_API_KEY:}
+    model: ${OPENAI_MODEL:gpt-3.5-turbo}
+    max-tokens: 1000
+    temperature: 0.7
+    timeout: 30000 # milliseconds
+
+# Vector database configuration (optional)
+vector:
+  db:
+    enabled: ${VECTOR_DB_ENABLED:false}
+    url: ${VECTOR_DB_URL:}
+    api-key: ${VECTOR_DB_API_KEY:}
+    timeout: 10000 # milliseconds
+
+# Chat service configuration
+chat:
+  rate-limit:
+    requests-per-minute: 20
+    burst-capacity: 5
+  retrieval:
+    top-k: 5
+    keyword-weight: 0.7
+    vector-weight: 0.3
+  sanitization:
+    enabled: true
+    log-pii-detection: true
+  logging:
+    enabled: true
+    log-queries: true
+    log-responses: true
+    log-sources: true
+
+# Knowledge base configuration
+knowledge:
+  base:
+    enabled: true
+    default-category: "general"
+    max-content-length: 10000
+    auto-index: true
+
+# Logging configuration
+logging:
+  level:
+    com.fintech.chat: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.data: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Management endpoints for monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      simple:
+        enabled: true
+
+# Application specific configuration
+app:
+  name: Chatbot Service
+  version: 1.0.0
+  description: AI-powered financial chatbot with knowledge retrieval
